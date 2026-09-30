@@ -1,6 +1,6 @@
 # InterviewPrep Tracker
 
-An AI-powered interview preparation platform designed to help students organize their preparation, practice technical and aptitude questions, analyze resumes, schedule interviews, and track their overall readiness.
+An AI-powered interview preparation platform designed to help students organize their preparation, practice technical and aptitude questions, analyze resumes and track their overall performance.
 
 ## 🚀 Features
 
@@ -9,12 +9,9 @@ An AI-powered interview preparation platform designed to help students organize 
 * 💻 **Technical Quiz** — Practice technical questions and evaluate performance.
 * 🧠 **Aptitude Practice** — Practice aptitude questions to improve problem-solving skills.
 * 📄 **AI Resume Analyzer** — Analyze resumes and receive AI-based feedback and improvement suggestions.
-* 📅 **Interview Scheduler** — Schedule interviews and manage upcoming interview activities.
 * 🤖 **AI Chatbot** — Get technical, interview, and preparation-related guidance.
 * 📈 **Progress Tracker** — Track quiz performance, completed activities, and preparation progress.
-* 🔖 **Bookmarks** — Save important questions and resources for later revision.
-* 🎯 **Interview Readiness Score** — Generate a readiness score based on preparation and performance.
-* 💡 **Personalized Recommendations** — Receive recommendations based on the user's preparation data and performance.
+
 
 ## 🛠️ Tech Stack
 
@@ -24,7 +21,6 @@ An AI-powered interview preparation platform designed to help students organize 
 * TypeScript
 * HTML
 * CSS
-* Vite
 * Tailwind CSS
 
 ### Backend
