@@ -1,0 +1,6 @@
+{
+  "name": "InterviewPrep Tracker",
+  "description": "AI-Powered Interview Preparation and Placement Readiness Platform for B.Tech/CSE students featuring technical quizzes, aptitude practice, study notes, AI resume analysis, AI mock interviews, rule-based recommendations, and readiness scoring.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

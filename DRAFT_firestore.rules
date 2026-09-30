@@ -1,0 +1,310 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net (Default-Deny Catch-All)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Hardened Global Primitives
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function userProfileExists() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isBoundedStringArray(arr, maxItems) {
+      return arr is list && arr.size() <= maxItems && (arr.size() == 0 || (arr[0] is string && arr[0].size() <= 500));
+    }
+
+    // 3. Entity Validation Blueprints (Synchronized with firebase-blueprint.json)
+    function isValidUserProfile(data) {
+      return data.keys().hasAll([
+        'firebaseUid', 'name', 'email', 'college', 'degree', 'department',
+        'year', 'cgpa', 'targetRole', 'preferredDomain', 'skills', 'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'firebaseUid', 'name', 'email', 'college', 'degree', 'department',
+        'year', 'cgpa', 'targetRole', 'preferredDomain', 'skills', 'createdAt', 'updatedAt'
+      ]) &&
+      data.firebaseUid == request.auth.uid &&
+      data.firebaseUid is string && data.firebaseUid.size() >= 1 && data.firebaseUid.size() <= 128 && data.firebaseUid.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.name is string && data.name.size() >= 1 && data.name.size() <= 120 &&
+      data.email is string && data.email.size() >= 3 && data.email.size() <= 200 &&
+      data.college is string && data.college.size() <= 200 &&
+      data.degree is string && data.degree.size() <= 100 &&
+      data.department is string && data.department.size() <= 100 &&
+      data.year is string && data.year.size() <= 30 && data.year in ['1st Year', '2nd Year', '3rd Year', '4th Year', 'Graduated'] &&
+      data.cgpa is string && data.cgpa.size() <= 20 &&
+      data.targetRole is string && data.targetRole.size() >= 1 && data.targetRole.size() <= 100 &&
+      data.preferredDomain is string && data.preferredDomain.size() <= 100 &&
+      isBoundedStringArray(data.skills, 30) &&
+      data.createdAt is timestamp &&
+      data.updatedAt is timestamp;
+    }
+
+    function isValidQuizResult(data) {
+      return data.keys().hasAll([
+        'userId', 'category', 'difficulty', 'totalQuestions',
+        'correctAnswers', 'wrongAnswers', 'score', 'percentage', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'userId', 'category', 'difficulty', 'totalQuestions',
+        'correctAnswers', 'wrongAnswers', 'score', 'percentage', 'createdAt'
+      ]) &&
+      data.userId == request.auth.uid &&
+      data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 && data.userId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.category is string && data.category.size() <= 60 &&
+      data.category in ['Java', 'Python', 'C', 'Data Structures', 'DBMS', 'Operating Systems', 'Computer Networks', 'OOP'] &&
+      data.difficulty is string && data.difficulty.size() <= 20 &&
+      data.difficulty in ['Easy', 'Medium', 'Hard'] &&
+      data.totalQuestions is int && data.totalQuestions >= 1 && data.totalQuestions <= 50 &&
+      data.correctAnswers is int && data.correctAnswers >= 0 && data.correctAnswers <= data.totalQuestions &&
+      data.wrongAnswers is int && data.wrongAnswers >= 0 && data.wrongAnswers <= data.totalQuestions &&
+      data.score is int && data.score >= 0 && data.score <= data.totalQuestions &&
+      data.percentage is int && data.percentage >= 0 && data.percentage <= 100 &&
+      data.createdAt is timestamp;
+    }
+
+    function isValidAptitudeResult(data) {
+      return data.keys().hasAll([
+        'userId', 'category', 'difficulty', 'totalQuestions',
+        'correctAnswers', 'wrongAnswers', 'score', 'percentage', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'userId', 'category', 'difficulty', 'totalQuestions',
+        'correctAnswers', 'wrongAnswers', 'score', 'percentage', 'createdAt'
+      ]) &&
+      data.userId == request.auth.uid &&
+      data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 && data.userId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.category is string && data.category.size() <= 60 &&
+      data.category in ['Quantitative Aptitude', 'Logical Reasoning', 'Verbal Ability'] &&
+      data.difficulty is string && data.difficulty.size() <= 20 &&
+      data.difficulty in ['Easy', 'Medium', 'Hard'] &&
+      data.totalQuestions is int && data.totalQuestions >= 1 && data.totalQuestions <= 50 &&
+      data.correctAnswers is int && data.correctAnswers >= 0 && data.correctAnswers <= data.totalQuestions &&
+      data.wrongAnswers is int && data.wrongAnswers >= 0 && data.wrongAnswers <= data.totalQuestions &&
+      data.score is int && data.score >= 0 && data.score <= data.totalQuestions &&
+      data.percentage is int && data.percentage >= 0 && data.percentage <= 100 &&
+      data.createdAt is timestamp;
+    }
+
+    function isValidStudyNote(data) {
+      return data.keys().hasAll([
+        'userId', 'title', 'subject', 'topic', 'content', 'important', 'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'userId', 'title', 'subject', 'topic', 'content', 'important', 'createdAt', 'updatedAt'
+      ]) &&
+      data.userId == request.auth.uid &&
+      data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 && data.userId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.title is string && data.title.size() >= 1 && data.title.size() <= 150 &&
+      data.subject is string && data.subject.size() >= 1 && data.subject.size() <= 60 &&
+      data.topic is string && data.topic.size() >= 1 && data.topic.size() <= 100 &&
+      data.content is string && data.content.size() >= 1 && data.content.size() <= 10000 &&
+      data.important is bool &&
+      data.createdAt is timestamp &&
+      data.updatedAt is timestamp;
+    }
+
+    function isValidBookmark(data) {
+      return data.keys().hasAll([
+        'userId', 'itemType', 'title', 'category', 'content', 'explanation', 'referenceId', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'userId', 'itemType', 'title', 'category', 'content', 'explanation', 'referenceId', 'createdAt'
+      ]) &&
+      data.userId == request.auth.uid &&
+      data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 && data.userId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.itemType is string && data.itemType.size() <= 30 && data.itemType in ['quiz', 'aptitude', 'note', 'interview'] &&
+      data.title is string && data.title.size() >= 1 && data.title.size() <= 500 &&
+      data.category is string && data.category.size() >= 1 && data.category.size() <= 80 &&
+      data.content is string && data.content.size() <= 4000 &&
+      data.explanation is string && data.explanation.size() <= 2000 &&
+      data.referenceId is string && data.referenceId.size() <= 128 &&
+      data.createdAt is timestamp;
+    }
+
+    function isValidResumeAnalysis(data) {
+      return data.keys().hasAll([
+        'userId', 'fileName', 'targetRole', 'resumeScore', 'skillsFound', 'missingSkills',
+        'strengths', 'areasToImprove', 'suggestedSkills', 'suggestedImprovements', 'summary', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'userId', 'fileName', 'targetRole', 'resumeScore', 'skillsFound', 'missingSkills',
+        'strengths', 'areasToImprove', 'suggestedSkills', 'suggestedImprovements', 'summary', 'createdAt'
+      ]) &&
+      data.userId == request.auth.uid &&
+      data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 && data.userId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.fileName is string && data.fileName.size() >= 1 && data.fileName.size() <= 200 &&
+      data.targetRole is string && data.targetRole.size() >= 1 && data.targetRole.size() <= 100 &&
+      data.resumeScore is int && data.resumeScore >= 0 && data.resumeScore <= 100 &&
+      isBoundedStringArray(data.skillsFound, 40) &&
+      isBoundedStringArray(data.missingSkills, 25) &&
+      isBoundedStringArray(data.strengths, 15) &&
+      isBoundedStringArray(data.areasToImprove, 15) &&
+      isBoundedStringArray(data.suggestedSkills, 20) &&
+      isBoundedStringArray(data.suggestedImprovements, 15) &&
+      data.summary is string && data.summary.size() >= 1 && data.summary.size() <= 3000 &&
+      data.createdAt is timestamp;
+    }
+
+    function isValidMockInterview(data) {
+      return data.keys().hasAll([
+        'userId', 'role', 'type', 'difficulty', 'experienceLevel', 'totalQuestions',
+        'overallScore', 'strongAreas', 'weakAreas', 'suggestions', 'transcriptSummary', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'userId', 'role', 'type', 'difficulty', 'experienceLevel', 'totalQuestions',
+        'overallScore', 'strongAreas', 'weakAreas', 'suggestions', 'transcriptSummary', 'createdAt'
+      ]) &&
+      data.userId == request.auth.uid &&
+      data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 && data.userId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.role is string && data.role.size() >= 1 && data.role.size() <= 100 &&
+      data.type is string && data.type.size() <= 30 && data.type in ['Technical', 'HR', 'Mixed'] &&
+      data.difficulty is string && data.difficulty.size() <= 20 && data.difficulty in ['Easy', 'Medium', 'Hard'] &&
+      data.experienceLevel is string && data.experienceLevel.size() >= 1 && data.experienceLevel.size() <= 50 &&
+      data.totalQuestions is int && data.totalQuestions >= 1 && data.totalQuestions <= 20 &&
+      data.overallScore is int && data.overallScore >= 0 && data.overallScore <= 100 &&
+      isBoundedStringArray(data.strongAreas, 15) &&
+      isBoundedStringArray(data.weakAreas, 15) &&
+      isBoundedStringArray(data.suggestions, 15) &&
+      data.transcriptSummary is string && data.transcriptSummary.size() <= 15000 &&
+      data.createdAt is timestamp;
+    }
+
+    // 4. Collection Rules
+
+    // /users/{userId} - Private Student Profile (PII Strictly Isolated to Owner)
+    match /users/{userId} {
+      allow get: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId;
+      allow list: if false;
+      allow create: if isVerifiedUser() &&
+        isValidId(userId) &&
+        request.auth.uid == userId &&
+        isValidUserProfile(incoming()) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isVerifiedUser() &&
+        isValidId(userId) &&
+        request.auth.uid == userId &&
+        isValidUserProfile(incoming()) &&
+        incoming().firebaseUid == existing().firebaseUid &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          // Action: Update Student Profile Details
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'name', 'email', 'college', 'degree', 'department',
+            'year', 'cgpa', 'targetRole', 'preferredDomain', 'skills', 'updatedAt'
+          ])
+        );
+      allow delete: if false;
+    }
+
+    // /quizResults/{resultId} - Immutable Quiz Attempt Records
+    match /quizResults/{resultId} {
+      allow get: if isVerifiedUser() && isValidId(resultId) && existing().userId == request.auth.uid;
+      allow list: if isVerifiedUser() && existing().userId == request.auth.uid;
+      allow create: if isVerifiedUser() &&
+        isValidId(resultId) &&
+        isValidQuizResult(incoming()) &&
+        incoming().createdAt == request.time &&
+        userProfileExists();
+      allow update, delete: if false;
+    }
+
+    // /aptitudeResults/{resultId} - Immutable Aptitude Attempt Records
+    match /aptitudeResults/{resultId} {
+      allow get: if isVerifiedUser() && isValidId(resultId) && existing().userId == request.auth.uid;
+      allow list: if isVerifiedUser() && existing().userId == request.auth.uid;
+      allow create: if isVerifiedUser() &&
+        isValidId(resultId) &&
+        isValidAptitudeResult(incoming()) &&
+        incoming().createdAt == request.time &&
+        userProfileExists();
+      allow update, delete: if false;
+    }
+
+    // /notes/{noteId} - Student Study Notes
+    match /notes/{noteId} {
+      allow get: if isVerifiedUser() && isValidId(noteId) && existing().userId == request.auth.uid;
+      allow list: if isVerifiedUser() && existing().userId == request.auth.uid;
+      allow create: if isVerifiedUser() &&
+        isValidId(noteId) &&
+        isValidStudyNote(incoming()) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        userProfileExists();
+      allow update: if isVerifiedUser() &&
+        isValidId(noteId) &&
+        isValidStudyNote(incoming()) &&
+        existing().userId == request.auth.uid &&
+        incoming().userId == existing().userId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          // Action 1: Edit Note Content or Metadata
+          incoming().diff(existing()).affectedKeys().hasOnly(['title', 'subject', 'topic', 'content', 'important', 'updatedAt']) ||
+          // Action 2: Toggle Important Flag
+          incoming().diff(existing()).affectedKeys().hasOnly(['important', 'updatedAt'])
+        ) &&
+        userProfileExists();
+      allow delete: if isVerifiedUser() && isValidId(noteId) && existing().userId == request.auth.uid;
+    }
+
+    // /bookmarks/{bookmarkId} - Student Bookmarks
+    match /bookmarks/{bookmarkId} {
+      allow get: if isVerifiedUser() && isValidId(bookmarkId) && existing().userId == request.auth.uid;
+      allow list: if isVerifiedUser() && existing().userId == request.auth.uid;
+      allow create: if isVerifiedUser() &&
+        isValidId(bookmarkId) &&
+        isValidBookmark(incoming()) &&
+        incoming().createdAt == request.time &&
+        userProfileExists();
+      allow update: if false;
+      allow delete: if isVerifiedUser() && isValidId(bookmarkId) && existing().userId == request.auth.uid;
+    }
+
+    // /resumes/{resumeId} - Immutable AI Resume Analyses
+    match /resumes/{resumeId} {
+      allow get: if isVerifiedUser() && isValidId(resumeId) && existing().userId == request.auth.uid;
+      allow list: if isVerifiedUser() && existing().userId == request.auth.uid;
+      allow create: if isVerifiedUser() &&
+        isValidId(resumeId) &&
+        isValidResumeAnalysis(incoming()) &&
+        incoming().createdAt == request.time &&
+        userProfileExists();
+      allow update, delete: if false;
+    }
+
+    // /interviews/{interviewId} - Immutable AI Mock Interview Records
+    match /interviews/{interviewId} {
+      allow get: if isVerifiedUser() && isValidId(interviewId) && existing().userId == request.auth.uid;
+      allow list: if isVerifiedUser() && existing().userId == request.auth.uid;
+      allow create: if isVerifiedUser() &&
+        isValidId(interviewId) &&
+        isValidMockInterview(incoming()) &&
+        incoming().createdAt == request.time &&
+        userProfileExists();
+      allow update, delete: if false;
+    }
+  }
+}

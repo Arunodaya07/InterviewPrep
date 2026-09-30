@@ -1,0 +1,568 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Student profile containing academic details, skills, and target career preferences.",
+      "type": "object",
+      "properties": {
+        "firebaseUid": {
+          "type": "string",
+          "description": "Authenticated Firebase user UID.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the student.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Student email address.",
+          "minLength": 3,
+          "maxLength": 200
+        },
+        "college": {
+          "type": "string",
+          "description": "College or university name.",
+          "minLength": 0,
+          "maxLength": 200
+        },
+        "degree": {
+          "type": "string",
+          "description": "Degree program (e.g., B.Tech).",
+          "minLength": 0,
+          "maxLength": 100
+        },
+        "department": {
+          "type": "string",
+          "description": "Academic department (e.g., CSE, IT, ECE).",
+          "minLength": 0,
+          "maxLength": 100
+        },
+        "year": {
+          "type": "string",
+          "description": "Current year of study.",
+          "enum": ["1st Year", "2nd Year", "3rd Year", "4th Year", "Graduated"],
+          "maxLength": 30
+        },
+        "cgpa": {
+          "type": "string",
+          "description": "Current CGPA on a 10-point scale.",
+          "minLength": 0,
+          "maxLength": 20
+        },
+        "targetRole": {
+          "type": "string",
+          "description": "Target role for placement preparation.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "preferredDomain": {
+          "type": "string",
+          "description": "Preferred job domain.",
+          "minLength": 0,
+          "maxLength": 100
+        },
+        "skills": {
+          "type": "array",
+          "description": "Bounded list of student technical skills (max 30).",
+          "maxLength": 30
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation server timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update server timestamp."
+        }
+      },
+      "required": [
+        "firebaseUid",
+        "name",
+        "email",
+        "college",
+        "degree",
+        "department",
+        "year",
+        "cgpa",
+        "targetRole",
+        "preferredDomain",
+        "skills",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "QuizResult": {
+      "title": "QuizResult",
+      "description": "Result record of a completed technical quiz.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase UID.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "category": {
+          "type": "string",
+          "description": "Technical quiz category.",
+          "enum": [
+            "Java",
+            "Python",
+            "C",
+            "Data Structures",
+            "DBMS",
+            "Operating Systems",
+            "Computer Networks",
+            "OOP"
+          ],
+          "maxLength": 60
+        },
+        "difficulty": {
+          "type": "string",
+          "description": "Difficulty level.",
+          "enum": ["Easy", "Medium", "Hard"],
+          "maxLength": 20
+        },
+        "totalQuestions": {
+          "type": "integer",
+          "description": "Total questions attempted."
+        },
+        "correctAnswers": {
+          "type": "integer",
+          "description": "Count of correct answers."
+        },
+        "wrongAnswers": {
+          "type": "integer",
+          "description": "Count of wrong answers."
+        },
+        "score": {
+          "type": "integer",
+          "description": "Numeric score."
+        },
+        "percentage": {
+          "type": "integer",
+          "description": "Percentage score (0-100)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation server timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "category",
+        "difficulty",
+        "totalQuestions",
+        "correctAnswers",
+        "wrongAnswers",
+        "score",
+        "percentage",
+        "createdAt"
+      ]
+    },
+    "AptitudeResult": {
+      "title": "AptitudeResult",
+      "description": "Result record of a completed aptitude test.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase UID.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "category": {
+          "type": "string",
+          "description": "Aptitude category.",
+          "enum": [
+            "Quantitative Aptitude",
+            "Logical Reasoning",
+            "Verbal Ability"
+          ],
+          "maxLength": 60
+        },
+        "difficulty": {
+          "type": "string",
+          "description": "Difficulty level.",
+          "enum": ["Easy", "Medium", "Hard"],
+          "maxLength": 20
+        },
+        "totalQuestions": {
+          "type": "integer",
+          "description": "Total questions attempted."
+        },
+        "correctAnswers": {
+          "type": "integer",
+          "description": "Count of correct answers."
+        },
+        "wrongAnswers": {
+          "type": "integer",
+          "description": "Count of wrong answers."
+        },
+        "score": {
+          "type": "integer",
+          "description": "Numeric score."
+        },
+        "percentage": {
+          "type": "integer",
+          "description": "Percentage score (0-100)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation server timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "category",
+        "difficulty",
+        "totalQuestions",
+        "correctAnswers",
+        "wrongAnswers",
+        "score",
+        "percentage",
+        "createdAt"
+      ]
+    },
+    "StudyNote": {
+      "title": "StudyNote",
+      "description": "Student study note for technical or aptitude subjects.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase UID.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "title": {
+          "type": "string",
+          "description": "Note title.",
+          "minLength": 1,
+          "maxLength": 150
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject category.",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "topic": {
+          "type": "string",
+          "description": "Specific topic name.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "content": {
+          "type": "string",
+          "description": "Note body text.",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "important": {
+          "type": "boolean",
+          "description": "Whether the note is marked important."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation server timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Update server timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "subject",
+        "topic",
+        "content",
+        "important",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Bookmark": {
+      "title": "Bookmark",
+      "description": "Bookmarked quiz question, study note, or interview question.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase UID.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "itemType": {
+          "type": "string",
+          "description": "Type of bookmarked item.",
+          "enum": ["quiz", "aptitude", "note", "interview"],
+          "maxLength": 30
+        },
+        "title": {
+          "type": "string",
+          "description": "Question text or note title.",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "category": {
+          "type": "string",
+          "description": "Subject or category.",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "content": {
+          "type": "string",
+          "description": "Answer or content details.",
+          "minLength": 0,
+          "maxLength": 4000
+        },
+        "explanation": {
+          "type": "string",
+          "description": "Explanation or feedback.",
+          "minLength": 0,
+          "maxLength": 2000
+        },
+        "referenceId": {
+          "type": "string",
+          "description": "Optional source ID.",
+          "minLength": 0,
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation server timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "itemType",
+        "title",
+        "category",
+        "content",
+        "explanation",
+        "referenceId",
+        "createdAt"
+      ]
+    },
+    "ResumeAnalysis": {
+      "title": "ResumeAnalysis",
+      "description": "AI-evaluated resume analysis record.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase UID.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "fileName": {
+          "type": "string",
+          "description": "Uploaded PDF filename.",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "targetRole": {
+          "type": "string",
+          "description": "Target role compared against.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "resumeScore": {
+          "type": "integer",
+          "description": "Overall score (0-100)."
+        },
+        "skillsFound": {
+          "type": "array",
+          "description": "Detected technical and soft skills (max 40).",
+          "maxLength": 40
+        },
+        "missingSkills": {
+          "type": "array",
+          "description": "Missing skills for target role (max 25).",
+          "maxLength": 25
+        },
+        "strengths": {
+          "type": "array",
+          "description": "Key resume strengths (max 15).",
+          "maxLength": 15
+        },
+        "areasToImprove": {
+          "type": "array",
+          "description": "Areas needing improvement (max 15).",
+          "maxLength": 15
+        },
+        "suggestedSkills": {
+          "type": "array",
+          "description": "Recommended skills to learn next (max 20).",
+          "maxLength": 20
+        },
+        "suggestedImprovements": {
+          "type": "array",
+          "description": "Actionable resume improvements (max 15).",
+          "maxLength": 15
+        },
+        "summary": {
+          "type": "string",
+          "description": "Executive summary of the resume evaluation.",
+          "minLength": 1,
+          "maxLength": 3000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation server timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "fileName",
+        "targetRole",
+        "resumeScore",
+        "skillsFound",
+        "missingSkills",
+        "strengths",
+        "areasToImprove",
+        "suggestedSkills",
+        "suggestedImprovements",
+        "summary",
+        "createdAt"
+      ]
+    },
+    "MockInterview": {
+      "title": "MockInterview",
+      "description": "Completed AI mock interview session summary.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase UID.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "role": {
+          "type": "string",
+          "description": "Target role interviewed for.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "type": {
+          "type": "string",
+          "description": "Interview type (Technical, HR, Mixed).",
+          "enum": ["Technical", "HR", "Mixed"],
+          "maxLength": 30
+        },
+        "difficulty": {
+          "type": "string",
+          "description": "Difficulty level.",
+          "enum": ["Easy", "Medium", "Hard"],
+          "maxLength": 20
+        },
+        "experienceLevel": {
+          "type": "string",
+          "description": "Experience level.",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "totalQuestions": {
+          "type": "integer",
+          "description": "Number of questions answered."
+        },
+        "overallScore": {
+          "type": "integer",
+          "description": "Normalized percentage score (0-100)."
+        },
+        "strongAreas": {
+          "type": "array",
+          "description": "Demonstrated strengths (max 15).",
+          "maxLength": 15
+        },
+        "weakAreas": {
+          "type": "array",
+          "description": "Identified weak areas (max 15).",
+          "maxLength": 15
+        },
+        "suggestions": {
+          "type": "array",
+          "description": "Improvement suggestions (max 15).",
+          "maxLength": 15
+        },
+        "transcriptSummary": {
+          "type": "string",
+          "description": "Serialized summary of Q&A and scores.",
+          "minLength": 0,
+          "maxLength": 15000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation server timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "role",
+        "type",
+        "difficulty",
+        "experienceLevel",
+        "totalQuestions",
+        "overallScore",
+        "strongAreas",
+        "weakAreas",
+        "suggestions",
+        "transcriptSummary",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Stores private student profile documents keyed by Firebase Auth UID."
+    },
+    "/quizResults/{resultId}": {
+      "schema": { "$ref": "#/entities/QuizResult" },
+      "description": "Stores technical quiz attempt results owned by a specific student."
+    },
+    "/aptitudeResults/{resultId}": {
+      "schema": { "$ref": "#/entities/AptitudeResult" },
+      "description": "Stores aptitude practice test results owned by a specific student."
+    },
+    "/notes/{noteId}": {
+      "schema": { "$ref": "#/entities/StudyNote" },
+      "description": "Stores student study notes."
+    },
+    "/bookmarks/{bookmarkId}": {
+      "schema": { "$ref": "#/entities/Bookmark" },
+      "description": "Stores student bookmarked questions and notes."
+    },
+    "/resumes/{resumeId}": {
+      "schema": { "$ref": "#/entities/ResumeAnalysis" },
+      "description": "Stores AI resume evaluation results."
+    },
+    "/interviews/{interviewId}": {
+      "schema": { "$ref": "#/entities/MockInterview" },
+      "description": "Stores completed AI mock interview evaluations."
+    }
+  }
+}
